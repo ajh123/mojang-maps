@@ -1,6 +1,8 @@
 package nl.abelkrijgtalles.MojangMaps.web;
 
 import nl.abelkrijgtalles.MojangMaps.MojangMaps;
+import nl.abelkrijgtalles.MojangMaps.web.servlets.GeoJsonServlet;
+import nl.abelkrijgtalles.MojangMaps.web.servlets.InfoServlet;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
@@ -10,7 +12,6 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
-import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -46,6 +47,9 @@ public class WebServer {
 		servletHolder.setInitParameter("dirAllowed", "true");
 		servletHolder.setInitParameter("cacheControl", "max-age=0,public");
 		context.addServlet(servletHolder, "/");
+
+		context.addServlet(new InfoServlet(), "/api/v1/info");
+		context.addServlet(new GeoJsonServlet(), "/api/v1/data/geojson");
 		webServer.start();
 	}
 

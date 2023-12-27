@@ -19,6 +19,7 @@ package nl.abelkrijgtalles.MojangMaps.object;
 
 import nl.abelkrijgtalles.MojangMaps.util.file.MessageUtil;
 
+import nl.abelkrijgtalles.MojangMaps.util.geo_json.RoadType;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.HashMap;
@@ -27,39 +28,50 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Road implements ConfigurationSerializable {
-
     private String name;
+
+    private final RoadType type;
 
     private final List<Integer> locations;
 
-    public Road(List<Integer> locations) {
+    public Road(List<Integer> locations, RoadType type) {
         this.locations = locations;
+        this.type = type;
     }
 
-    public Road(String name, List<Integer> locations) {
+    public Road(String name, List<Integer> locations, RoadType type) {
         this.name = name;
         this.locations = locations;
+        this.type = type;
     }
 
     public static Road deserialize(Map<String, Object> args) {
-
         String name = (String) args.get("name");
+        String type = (String) args.get("type");
         List<Integer> locations = (List<Integer>) args.get("locations");
 
         if (locations == null) {
             throw new IllegalArgumentException("There aren't any locations in this road.");
         }
 
-        if (name != null) {
-            return new Road(name, locations);
-        } else {
-            return new Road(locations);
+        RoadType roadType = RoadType.Unclassified;
+        if (type != null) {
+            roadType = RoadType.getType(name);
         }
 
+        if (name != null) {
+            return new Road(name, locations, roadType);
+        } else {
+            return new Road(locations, roadType);
+        }
     }
 
     public String getName() {
         return Objects.requireNonNullElse(name, MessageUtil.getMessage("unnamedroad"));
+    }
+
+    public RoadType getType() {
+        return type;
     }
 
     public List<Integer> getLocations() {
@@ -67,21 +79,22 @@ public class Road implements ConfigurationSerializable {
     }
 
     public int addLocation(Integer location) {
-
         locations.add(location);
         return locations.size() - 1;
-
     }
 
     @Override
     public Map<String, Object> serialize() {
-
         Map<String, Object> data = new HashMap<>();
 
         if (name != null) {
-
             data.put("name", this.name);
+        }
 
+        if (type != null) {
+            data.put("name", this.type.getTypeId());
+        } else {
+            data.put("name", RoadType.Unclassified.getTypeId());
         }
 
         data.put("locations", this.locations);

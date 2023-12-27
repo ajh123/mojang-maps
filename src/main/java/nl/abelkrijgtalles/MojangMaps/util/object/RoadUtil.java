@@ -17,6 +17,10 @@
 
 package nl.abelkrijgtalles.MojangMaps.util.object;
 
+import mil.nga.sf.geojson.Feature;
+import mil.nga.sf.geojson.FeatureCollection;
+import mil.nga.sf.geojson.LineString;
+import mil.nga.sf.geojson.Position;
 import nl.abelkrijgtalles.MojangMaps.object.Road;
 import nl.abelkrijgtalles.MojangMaps.util.file.MessageUtil;
 import nl.abelkrijgtalles.MojangMaps.util.file.NodesConfigUtil;
@@ -25,7 +29,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RoadUtil {
     public static void addMoreLocations(Player p, List<Location> locations) {
@@ -95,5 +101,30 @@ public class RoadUtil {
         }
         return "";
 
+    }
+
+    public static FeatureCollection getFeatureCollection() {
+        FeatureCollection collection = new FeatureCollection();
+
+        for (Road road : NodesConfigUtil.getRoads()) {
+            Feature feature = new Feature();
+
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("name", road.getName());
+            properties.put("highway", road.getType().getTypeId());
+            feature.setProperties(properties);
+
+            LineString path = new LineString();
+            List<Position> positions = new ArrayList<>();
+            for (Integer location1 : road.getLocations()) {
+                Location location = NodesConfigUtil.getLocations().get(location1);
+                Position position = new Position(location.getX(), location.getZ(), location.getY());
+                positions.add(position);
+            }
+
+            path.setCoordinates(positions);
+            feature.setGeometry(path);
+        }
+        return collection;
     }
 }

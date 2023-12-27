@@ -20,6 +20,7 @@ package nl.abelkrijgtalles.MojangMaps.command.register;
 import nl.abelkrijgtalles.MojangMaps.object.Road;
 import nl.abelkrijgtalles.MojangMaps.util.file.MessageUtil;
 import nl.abelkrijgtalles.MojangMaps.util.file.NodesConfigUtil;
+import nl.abelkrijgtalles.MojangMaps.util.geo_json.RoadType;
 import nl.abelkrijgtalles.MojangMaps.util.object.RoadUtil;
 
 import org.bukkit.ChatColor;
@@ -122,7 +123,7 @@ public class RegisterRoadCommand implements CommandExecutor {
 
                     }
 
-                    NodesConfigUtil.addRoad(new Road(name, locationsPointers));
+                    NodesConfigUtil.addRoad(new Road(name, locationsPointers, RoadType.Unclassified));
                     p.sendMessage(ChatColor.YELLOW + MessageUtil.getMessage("registeredroad"));
 
                 } else {
@@ -169,7 +170,7 @@ public class RegisterRoadCommand implements CommandExecutor {
 
                     }
 
-                    NodesConfigUtil.addRoad(new Road(locationsPointers));
+                    NodesConfigUtil.addRoad(new Road(locationsPointers,RoadType.Unclassified));
                     p.sendMessage(ChatColor.YELLOW + MessageUtil.getMessage("registeredroad"));
 
                 }

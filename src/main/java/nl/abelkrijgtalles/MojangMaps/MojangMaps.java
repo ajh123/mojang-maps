@@ -32,6 +32,7 @@ import nl.abelkrijgtalles.MojangMaps.util.file.NodesConfigUtil;
 import nl.abelkrijgtalles.MojangMaps.util.file.TranslationUtil;
 import nl.abelkrijgtalles.MojangMaps.util.other.HTTPUtil;
 
+import nl.abelkrijgtalles.MojangMaps.web.WebServer;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.DrilldownPie;
 
@@ -52,9 +53,13 @@ public final class MojangMaps extends JavaPlugin {
     public static SpiGUI spiGUI;
 
     public boolean isPluginOutdated = false;
+    public WebServer webServer;
+
+    public MojangMaps() {
+        this.webServer = new WebServer(this);
+    }
 
     private static void addLanguageChart(Metrics metrics, MojangMaps plugin) {
-
         metrics.addCustomChart(new DrilldownPie("language", () -> {
             Map<String, Map<String, Integer>> map = new HashMap<>();
             String language = plugin.getConfig().getString("language");
@@ -94,26 +99,21 @@ public final class MojangMaps extends JavaPlugin {
                 case "zh-TW" -> map.put("Chinese Traditional", entry);
                 default -> map.put("Other", entry);
             }
-
             return map;
         }));
-
     }
 
     @Override
     public void onDisable() {
-
         if (isPluginOutdated) {
-
             getLogger().warning("Don't forget to update Mojang Maps.");
-
         }
 
+        this.webServer.stop();;
     }
 
     @Override
     public void onEnable() {
-
         // Bstats init
         int pluginId = 19295;
         Metrics metrics = new Metrics(this, pluginId);
@@ -130,9 +130,7 @@ public final class MojangMaps extends JavaPlugin {
         // Update stuff
         checkVersion();
         if (isPluginOutdated) {
-
             getLogger().warning("Mojang Maps is outdated, please download the newest version at: https://github.com/Abelkrijgtalles/mojang-maps/releases/latest");
-
         }
 
         // Commands Init
@@ -150,25 +148,25 @@ public final class MojangMaps extends JavaPlugin {
         // SpiGUI init
         spiGUI = new SpiGUI(this);
 
-    }
+        // Web init
+		try {
+			this.webServer.start();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
     private void checkVersion() {
-
         JsonObject latestRelease = HTTPUtil.HTTPRequestJSONObject("https://api.github.com/repos/Abelkrijgtalles/mojang-maps/releases/latest");
         if (isOnline) {
             assert latestRelease != null;
             if (!Objects.equals(latestRelease.getString("name"), getDescription().getVersion())) {
                 isPluginOutdated = true;
-
             }
         }
-
     }
 
     public static Logger getMMLogger() {
-
         return MojangMaps.getPlugin(MojangMaps.class).getLogger();
-
     }
-
 }
