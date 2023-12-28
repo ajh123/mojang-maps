@@ -124,6 +124,7 @@ public class RoadUtil {
 
             path.setCoordinates(positions);
             feature.setGeometry(path);
+            collection.addFeature(feature);
         }
         return collection;
     }

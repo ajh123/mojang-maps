@@ -30,6 +30,7 @@ import nl.abelkrijgtalles.MojangMaps.listener.PlayerWalkListener;
 import nl.abelkrijgtalles.MojangMaps.object.Road;
 import nl.abelkrijgtalles.MojangMaps.util.file.NodesConfigUtil;
 import nl.abelkrijgtalles.MojangMaps.util.file.TranslationUtil;
+import nl.abelkrijgtalles.MojangMaps.util.geo_json.RoadType;
 import nl.abelkrijgtalles.MojangMaps.util.other.HTTPUtil;
 
 import nl.abelkrijgtalles.MojangMaps.web.WebServer;
@@ -126,6 +127,7 @@ public final class MojangMaps extends JavaPlugin {
         NodesConfigUtil.setup();
         TranslationUtil translationUtil = new TranslationUtil(this);
         translationUtil.updateTranslations();
+        RoadType.init();
 
         // Update stuff
         checkVersion();

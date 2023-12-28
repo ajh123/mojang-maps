@@ -1,61 +1,34 @@
 package nl.abelkrijgtalles.MojangMaps.web;
 
+import com.sun.net.httpserver.HttpServer;
 import nl.abelkrijgtalles.MojangMaps.MojangMaps;
 import nl.abelkrijgtalles.MojangMaps.web.servlets.GeoJsonServlet;
 import nl.abelkrijgtalles.MojangMaps.web.servlets.InfoServlet;
-import org.eclipse.jetty.ee10.servlet.DefaultServlet;
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletHolder;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.util.resource.ResourceFactory;
 
-import java.util.List;
+import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
 public class WebServer {
-	private Server webServer;
 	private final MojangMaps plugin;
+	private HttpServer server;
 
 	public WebServer(MojangMaps plugin) {
 		this.plugin = plugin;
 	}
 
 	public void start() throws Exception {
-		webServer = new Server();
-		ServerConnector connector = new ServerConnector(webServer);
-		connector.setPort(plugin.getConfig().getInt("port"));
-		webServer.setConnectors(new Connector[]{connector});
+		server = HttpServer.create(new InetSocketAddress(plugin.getConfig().getInt("port")), 0);
 
-		final ServletContextHandler context = new ServletContextHandler();
-		webServer.setHandler(context);
+		server.createContext("/api/v1/info", new InfoServlet());
+		server.createContext("/api/v1/data/geojson", new GeoJsonServlet());
 
-		// Create and configure a ResourceHandler.
-		ResourceHandler handler = new ResourceHandler();
-		// Configure the directory where static resources are located.
-		handler.setBaseResource(ResourceFactory.of(handler).newResource("/assets/website"));
-		// Configure directory listing.
-		handler.setDirAllowed(false);
-		// Configure welcome files.
-		handler.setWelcomeFiles(List.of("index.html"));
-		// Configure whether to accept range requests.
-		handler.setAcceptRanges(true);
-
-		final ServletHolder servletHolder = new ServletHolder("default", DefaultServlet.class);
-		servletHolder.setInitParameter("dirAllowed", "true");
-		servletHolder.setInitParameter("cacheControl", "max-age=0,public");
-		context.addServlet(servletHolder, "/");
-
-		context.addServlet(new InfoServlet(), "/api/v1/info");
-		context.addServlet(new GeoJsonServlet(), "/api/v1/data/geojson");
-		webServer.start();
+		server.setExecutor(null); // creates a default executor
+		server.start();
 	}
 
 	public void stop() {
 		try {
-			webServer.stop();
+			server.stop(0);
 		} catch (Exception e) {
 			MojangMaps.getMMLogger().log(Level.SEVERE, "An error occurred when stopping the web server.", e);
 		}

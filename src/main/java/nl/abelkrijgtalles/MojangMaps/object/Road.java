@@ -92,9 +92,9 @@ public class Road implements ConfigurationSerializable {
         }
 
         if (type != null) {
-            data.put("name", this.type.getTypeId());
+            data.put("type", this.type.getTypeId());
         } else {
-            data.put("name", RoadType.Unclassified.getTypeId());
+            data.put("type", RoadType.Unclassified.getTypeId());
         }
 
         data.put("locations", this.locations);

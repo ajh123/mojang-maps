@@ -37,7 +37,6 @@ public class RegisterRoadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-
         if (commandSender instanceof Player p) {
 
             boolean hasName = false;

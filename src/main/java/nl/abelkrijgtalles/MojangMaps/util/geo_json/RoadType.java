@@ -18,14 +18,17 @@ public class RoadType {
 	public static RoadType Unclassified = new RoadType("unclassified");
 
 	private final String type_id;
-	private static final Map<String, RoadType> types = new HashMap<>();
+	private static Map<String, RoadType> types;
 
 	RoadType(String typeId) {
 		type_id = typeId;
-		if (RoadType.types.containsKey(typeId)) {
+		if (types == null) {
+			types = new HashMap<>();
+		}
+		if (types.containsKey(typeId)) {
 			throw new IndexOutOfBoundsException("The road type `"+typeId+"` already exists.");
 		}
-		RoadType.types.put(typeId, this);
+		types.put(typeId, this);
 	}
 
 	public String getTypeId() {
@@ -33,9 +36,13 @@ public class RoadType {
 	}
 
 	public static RoadType getType(String typeId) {
-		if (RoadType.types.containsKey(typeId)) {
-			return RoadType.types.get(typeId);
+		if (types.containsKey(typeId)) {
+			return types.get(typeId);
 		}
 		return RoadType.Unclassified;
+	}
+
+	public static void init() {
+		// does nothing apart from initialise static variables.
 	}
 }
