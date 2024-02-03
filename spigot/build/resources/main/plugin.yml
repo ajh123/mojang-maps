@@ -1,0 +1,70 @@
+name: MojangMaps
+version: '1.5.2'
+main: nl.abelkrijgtalles.MojangMaps.MojangMaps
+api-version: '1.20'
+authors: [ Abelpro678 ]
+description: A Google Maps like navigation system for Minecraft.
+website: https://github.com/Abelkrijgtalles/mojang-maps
+commands:
+  registerlocation:
+    description: Register a location.
+    permission: mojangmaps.register.location
+    aliases:
+      - createlocation
+  registerroad:
+    description: Register a road.
+    permission: mojangmaps.register.road
+    aliases:
+      - createroad
+  goto:
+    description: Go to a specific location.
+    permission: mojangmaps.using.goto
+  whereamistanding:
+    description: Shows where you're standing.
+    permission: mojangmaps.using.viewlocation
+    aliases:
+      - whichroad
+      - where
+  reloadconfigsfromdisk:
+    description: Reloads all the configs from disk.
+    permission: mojangmaps.util.reloadconfigs
+    aliases:
+      - reloadconfigs
+      - reloadconfig
+  navigation:
+    description: Go to a specific location and view the navigation in GUI form.
+    permission: mojangmaps.using.navigation
+    aliases:
+      - gotogui
+
+permissions:
+  mojangmaps.register:
+    description: Lets you register things.
+    default: op
+    children:
+      mojangmaps.register.location:
+        description: Lets you register a location.
+        default: op
+      mojangmaps.register.road:
+        description: Lets you register a road.
+        default: op
+  mojangmaps.using:
+    description: Lets you use Mojang Maps.
+    default: true
+    children:
+      mojangmaps.using.goto:
+        description: Lets you go to a location.
+        default: true
+      mojangmaps.using.viewlocation:
+        description: Lets you view your location.
+        default: true
+      mojangmaps.using.navigation:
+        description: Lets you go to a location and view the navigation in GUI form.
+        default: true
+  mojangmaps.util:
+    description: Some useful tools for an admin.
+    default: op
+    children:
+      mojangmaps.util.reloadconfigs:
+        description: Lets you reload your configs from disk.
+        default: op

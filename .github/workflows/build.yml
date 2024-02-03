@@ -13,5 +13,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package
+      - name: Chmod Gradlew
+        run: sudo chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew jar
